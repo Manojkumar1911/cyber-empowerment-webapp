@@ -2,8 +2,8 @@
 
 import { AlertCircle, X } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Button } from './ui/button';
+import { Card } from './ui/card';
 
 interface AlertBoxProps {
   title?: string;

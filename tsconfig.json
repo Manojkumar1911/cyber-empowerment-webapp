@@ -1,8 +1,42 @@
 {
   "references": [
-    { "path": "./app" },
-    { "path": "./backend" }
+    {
+      "path": "./app"
+    },
+    {
+      "path": "./backend"
+    }
   ],
-  "include": ["app", "backend"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "app",
+    "backend",
+    ".next/types/**/*.ts"
+, "components"  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  }
 }

@@ -1,60 +1,52 @@
-import { z } from 'zod';
+import mongoose, { Document } from "mongoose";
 
-export const ScamReportSchema = z.object({
-  id: z.string().uuid(),
-  userId: z.string().uuid(),
-  type: z.string(),
-  description: z.string(),
-  evidence: z.array(z.string()).optional(),
-  status: z.enum(['pending', 'investigating', 'resolved']),
-  severity: z.enum(['low', 'medium', 'high']),
-  timestamp: z.date(),
-  updatedAt: z.date(),
+// Define the interface for ScamReport document
+export interface IScamReport extends Document {
+  userId: mongoose.Types.ObjectId;
+  type: string;
+  description: string;
+  evidence?: string;
+  status: 'pending' | 'investigating' | 'resolved' | 'dismissed';
+  severity: 'low' | 'medium' | 'high';
+  reportedAt: Date;
+}
+
+// Create the Mongoose schema
+const scamReportSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  type: { type: String, required: true },
+  description: { type: String, required: true },
+  evidence: { type: String },
+  status: { 
+    type: String, 
+    enum: ['pending', 'investigating', 'resolved', 'dismissed'],
+    default: 'pending'
+  },
+  severity: {
+    type: String,
+    enum: ['low', 'medium', 'high'],
+    default: 'low'
+  },
+  reportedAt: { type: Date, default: Date.now },
 });
 
-export type ScamReport = z.infer<typeof ScamReportSchema>;
+// Create and export the model
+export const ScamReport = mongoose.model<IScamReport>("ScamReport", scamReportSchema);
 
+// Create a class wrapper for model operations
 export class ScamReportModel {
-  private reports: ScamReport[] = [];
-
-  async create(reportData: Omit<ScamReport, 'id' | 'timestamp' | 'updatedAt'>): Promise<ScamReport> {
-    const newReport: ScamReport = {
-      id: crypto.randomUUID(),
-      ...reportData,
-      timestamp: new Date(),
-      updatedAt: new Date(),
-    };
-
-    this.reports.push(newReport);
-    return newReport;
+  async create(reportData: {
+    userId: string;
+    type: string;
+    description: string;
+    evidence?: string[];
+    status?: 'pending' | 'investigating' | 'resolved' | 'dismissed';
+    severity?: 'low' | 'medium' | 'high';
+  }): Promise<IScamReport> {
+    return await ScamReport.create(reportData);
   }
 
-  async findById(id: string): Promise<ScamReport | null> {
-    return this.reports.find(report => report.id === id) || null;
-  }
-
-  async findByUserId(userId: string): Promise<ScamReport[]> {
-    return this.reports.filter(report => report.userId === userId);
-  }
-
-  async update(id: string, reportData: Partial<ScamReport>): Promise<ScamReport | null> {
-    const index = this.reports.findIndex(report => report.id === id);
-    if (index === -1) return null;
-
-    this.reports[index] = {
-      ...this.reports[index],
-      ...reportData,
-      updatedAt: new Date(),
-    };
-
-    return this.reports[index];
-  }
-
-  async delete(id: string): Promise<boolean> {
-    const index = this.reports.findIndex(report => report.id === id);
-    if (index === -1) return false;
-
-    this.reports.splice(index, 1);
-    return true;
+  async findByUserId(userId: string): Promise<IScamReport[]> {
+    return await ScamReport.find({ userId }).exec();
   }
 }

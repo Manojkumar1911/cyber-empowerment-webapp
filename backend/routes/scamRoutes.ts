@@ -1,64 +1,51 @@
-import { Router } from 'express';
-import { ScamService } from '../services/ScamService';
-import { validation } from '../utils/validation';
+import { Router,Request,Response } from "express";
+import { ScamReport } from "../models/ScamReport";
+import { authMiddleware } from "../middlewares/authMiddleware";
+import { validation } from "../utils/validation";
 
 const router = Router();
-const scamService = new ScamService();
 
-router.post('/verify', async (req, res) => {
-  try {
-    const { otp, serviceProvider, context } = req.body;
-
-    if (!otp || !serviceProvider) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-
-    const result = await scamService.verifyOTP(otp, serviceProvider, context);
-    res.status(200).json(result);
-  } catch (error) {
-    console.error('OTP verification failed:', error);
-    res.status(500).json({ error: 'Verification failed' });
-  }
-});
-
-router.post('/report', async (req, res) => {
+// Submit a scam report
+router.post("/report", authMiddleware, async (req: Request, res: Response) => {
   try {
     const { userId, type, description, evidence } = req.body;
 
     if (!userId || !type || !description) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ error: "Missing required fields" });
     }
 
     // Sanitize input
     const sanitizedDescription = validation.sanitizeInput(description);
 
-    const report = await scamService.reportScam(
+    const report = new ScamReport({
       userId,
       type,
-      sanitizedDescription,
-      evidence
-    );
+      description: sanitizedDescription,
+      evidence,
+    });
 
-    res.status(201).json(report);
+    await report.save();
+    res.status(201).json({ message: "Scam report submitted successfully!" });
   } catch (error) {
-    console.error('Scam report submission failed:', error);
-    res.status(500).json({ error: 'Report submission failed' });
+    console.error("Scam report submission failed:", error);
+    res.status(500).json({ error: "Report submission failed" });
   }
 });
 
-router.get('/reports/:userId', async (req, res) => {
+// Get all scam reports
+router.get("/reports/:userId", authMiddleware, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
     if (!userId) {
-      return res.status(400).json({ error: 'User ID is required' });
+      return res.status(400).json({ error: "User ID is required" });
     }
 
-    const reports = await scamService.getUserReports(userId);
+    const reports = await ScamReport.find({ userId });
     res.status(200).json(reports);
   } catch (error) {
-    console.error('Fetching reports failed:', error);
-    res.status(500).json({ error: 'Failed to fetch reports' });
+    console.error("Fetching reports failed:", error);
+    res.status(500).json({ error: "Failed to fetch reports" });
   }
 });
 

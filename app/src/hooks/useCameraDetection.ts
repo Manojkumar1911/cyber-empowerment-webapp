@@ -1,6 +1,6 @@
 // hooks/useCameraDetection.ts
 import { useState, useEffect } from 'react';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "../../../components/ui/use-toast";
 
 const useCameraDetection = () => {
   const [isCameraActive, setIsCameraActive] = useState(false);

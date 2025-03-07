@@ -1,4 +1,4 @@
-import { ScamReportModel, ScamReport } from '../models/ScamReport';
+import { ScamReportModel, IScamReport } from '../models/ScamReport';
 import { validation } from '../utils/validation';
 import { security } from '../utils/security';
 
@@ -64,7 +64,7 @@ export class ScamService {
     type: string,
     description: string,
     evidence?: string[]
-  ): Promise<ScamReport> {
+  ): Promise<IScamReport> {
     // Validate input
     const sanitizedDescription = validation.sanitizeInput(description);
 
@@ -84,7 +84,7 @@ export class ScamService {
     return report;
   }
 
-  async getUserReports(userId: string): Promise<ScamReport[]> {
+  async getUserReports(userId: string): Promise<IScamReport[]> {
     return this.scamReportModel.findByUserId(userId);
   }
 

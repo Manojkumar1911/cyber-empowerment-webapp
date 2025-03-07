@@ -1,4 +1,4 @@
-import { UserModel, User } from '../models/User';
+import UserModel, { User } from '../models/User';
 import { security } from '../utils/security';
 import { validation } from '../utils/validation';
 

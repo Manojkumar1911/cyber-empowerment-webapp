@@ -1,10 +1,12 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { ModeToggle } from '@/components/mode-toggle';
+//import { Button } from '@/components/ui/button';
+//import { ModeToggle } from '@/components/ui/mode-toggle';
 import { Shield } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { ModeToggle } from './mode-toggle';
+import { Button } from './ui/button';
 
 export default function Navbar() {
   const pathname = usePathname();

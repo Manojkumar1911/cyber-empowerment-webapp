@@ -1,7 +1,7 @@
 // components/VideoCall.tsx
 import { useState, useEffect } from 'react';
 //import AlertBox from './AlertBox';
-import { Button } from '@/components/ui/button';
+import { Button } from '../components/ui/button';
 import AlertBox from './AlertBox';
 
 const VideoCall = () => {

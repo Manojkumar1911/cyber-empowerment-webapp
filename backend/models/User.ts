@@ -1,57 +1,36 @@
-import { z } from 'zod';
+// models/User.ts
+interface User {
+  _id: string;
+  email: string;
+  password: string;
+  name: string;
+}
 
-export const UserSchema = z.object({
-  id: z.string().uuid(),
-  email: z.string().email(),
-  name: z.string().min(2),
-  password: z.string().min(8),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-export type User = z.infer<typeof UserSchema>;
-
-export class UserModel {
-  private users: User[] = [];
+class UserModel {
+  // Mock implementation for demonstration
+  async findByEmail(email: string): Promise<User | null> {
+    // Database query logic here
+    return null;
+  }
 
   async findById(id: string): Promise<User | null> {
-    return this.users.find(user => user.id === id) || null;
+    // Database query logic here
+    return null;
   }
 
-  async findByEmail(email: string): Promise<User | null> {
-    return this.users.find(user => user.email === email) || null;
-  }
-
-  async create(userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
-    const newUser: User = {
-      id: crypto.randomUUID(),
-      ...userData,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+  async create(userData: Omit<User, '_id'>): Promise<User> {
+    // Database insert logic here
+    return {
+      _id: Math.random().toString(36).substr(2, 9),
+      ...userData
     };
-
-    this.users.push(newUser);
-    return newUser;
   }
 
-  async update(id: string, userData: Partial<User>): Promise<User | null> {
-    const index = this.users.findIndex(user => user.id === id);
-    if (index === -1) return null;
-
-    this.users[index] = {
-      ...this.users[index],
-      ...userData,
-      updatedAt: new Date(),
-    };
-
-    return this.users[index];
-  }
-
-  async delete(id: string): Promise<boolean> {
-    const index = this.users.findIndex(user => user.id === id);
-    if (index === -1) return false;
-
-    this.users.splice(index, 1);
+  async update(id: string, data: Partial<User>): Promise<boolean> {
+    // Database update logic here
     return true;
   }
 }
+
+export default UserModel;
+export { User };

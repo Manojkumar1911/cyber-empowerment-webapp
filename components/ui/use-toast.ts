@@ -1,4 +1,4 @@
-import { Toast,} from "@/components/ui/toast"
+import { Toast,} from "../ui/toast"
 import {
   toast as sonnerToast,
   ToastT as SonnerToast,
