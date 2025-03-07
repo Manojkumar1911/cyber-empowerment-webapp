@@ -1,0 +1,8 @@
+{
+  "references": [
+    { "path": "./app" },
+    { "path": "./backend" }
+  ],
+  "include": ["app", "backend"],
+  "exclude": ["node_modules", "dist"]
+}
